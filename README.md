@@ -1,33 +1,35 @@
 <p align="center">
-  <img src="package/banner.png" alt="Buildheim: blueprints for Valheim" width="900">
+  <img src="package/banner.png" alt="Schemheim: Litematica-style blueprints for Valheim" width="900">
 </p>
 
 <p align="center">Plan it. Gather it. Build it.</p>
 
 A client-only blueprint mod for Valheim, inspired by Litematica. Load or capture a building, position a private hologram, and build it with your normal hammer.
 
-**Only you need the mod.** The server and other players do not need Buildheim. Your blueprint stays local; the pieces you build become ordinary world objects. Building uses materials from your inventory.
+Schemheim is a fork of [Buildheim](https://github.com/AugusDogus/Buildheim) by AugusDogus, which itself grew out of [PlanBuild](https://github.com/sirskunkalot/PlanBuild). See [Acknowledgments and license](#acknowledgments-and-license).
+
+**Only you need the mod.** The server and other players do not need Schemheim. Your blueprint stays local; the pieces you build become ordinary world objects. Building uses materials from your inventory.
 
 ## Installation
 
 In your r2modman profile:
 
 1. Install **BepInExPack Valheim 5.4.2333 or newer** and **Jötunn 2.30.0 or newer**.
-2. Copy this project's `Buildheim.dll` into a folder under `BepInEx/plugins`. Remove the previous PlanBuild DLL when upgrading. Keep only one Buildheim DLL in the profile.
+2. Copy this project's `Schemheim.dll` into a folder under `BepInEx/plugins`. Remove any Buildheim or PlanBuild DLL when switching. Keep only one Schemheim DLL in the profile.
 3. Launch with **Start modded**, join a world, and press **End**.
 
-Download a ZIP from [Releases](https://github.com/AugusDogus/Buildheim/releases) or [Actions](https://github.com/AugusDogus/Buildheim/actions), or build the DLL using the [development instructions](docs/DEVELOPMENT.md). Use this project's build: the original PlanBuild package has a different workflow. Restart Valheim after replacing the DLL.
+Download a ZIP from [Releases](https://github.com/ryanjakegarcia/Schemheim/releases) or [Actions](https://github.com/ryanjakegarcia/Schemheim/actions), or build the DLL using the [development instructions](docs/DEVELOPMENT.md). Use this project's build: the Buildheim and PlanBuild packages have different plugin IDs and config files. Restart Valheim after replacing the DLL.
 
 **Compatibility:** compilation and automated checks pass against Valheim **1.0.7**, BepInExPack **5.4.2350**, and Jötunn **2.30.0**. This is a development build. The new UI, targeting, and reconnect workflow still need in-game validation; multiplayer compatibility is not yet fully verified.
 
 ## Your first build
 
-1. Press **End**, open **Blueprints**, and click **Open folder** to open your configured blueprint directory. Put `.blueprint` or `.vbuild` files there. Extract downloaded ZIPs first. Subfolders work too. Fresh installs use `BepInEx/config/Buildheim/blueprints` inside your profile.
+1. Press **End**, open **Blueprints**, and click **Open folder** to open your configured blueprint directory. Put `.blueprint` or `.vbuild` files there. Extract downloaded ZIPs first. Subfolders work too. Fresh installs use `BepInEx/config/Schemheim/blueprints` inside your profile.
 2. Return to the Blueprints tab and click **Refresh**. Choose a building to load its hologram and open the **Build** tab.
 3. Close the planner and position the hologram with the shortcuts below. Loading or moving a hologram does not spend materials.
    To align it with an existing building, aim at that building's snap point before opening the planner, then click **Snap to target** in the Build tab.
 4. Open **Materials** to see what you need. Gather supplies and carry the materials for the pieces you want to place.
-5. Select **Click to build**, close the planner, and equip your normal hammer. Aim at a missing hologram piece and click. Buildheim selects its recipe, position, and rotation, then Valheim checks and places it.
+5. Select **Click to build**, close the planner, and equip your normal hammer. Aim at a missing hologram piece and click. Schemheim selects its recipe, position, and rotation, then Valheim checks and places it.
 
 Completed pieces disappear from the hologram as they are detected in the loaded world.
 
@@ -59,9 +61,9 @@ Use these with a hologram loaded and the planner closed. Movement follows your c
 | **Shift** with a positioning shortcut | Use larger steps |
 | **Home** | Toggle autobuild while the planner is closed |
 | **F7** | Enable or disable the current placement while the planner is closed |
-| **F8** | Show or hide Buildheim's HUD while the planner is closed |
+| **F8** | Show or hide Schemheim's HUD while the planner is closed |
 
-The Build tab's **Snap to target** action aligns the closest snap point in the loaded blueprint with the snap point on the building you aimed at. Position and rotate the hologram roughly first, aim near the desired connection on an existing piece, then open the planner and click the action. Rotation stays unchanged. Custom `#SnapPoints` markers are used when present; otherwise Buildheim reads the native snap points from the blueprint's pieces, including old captures and `.vbuild` files. If either side has no snap points or the aim misses a building, the position is left unchanged.
+The Build tab's **Snap to target** action aligns the closest snap point in the loaded blueprint with the snap point on the building you aimed at. Position and rotate the hologram roughly first, aim near the desired connection on an existing piece, then open the planner and click the action. Rotation stays unchanged. Custom `#SnapPoints` markers are used when present; otherwise Schemheim reads the native snap points from the blueprint's pieces, including old captures and `.vbuild` files. If either side has no snap points or the aim misses a building, the position is left unchanged.
 
 Normal steps are **0.1 m** and **22.5°**. Hold Shift for **1 m** and **90°**. Rotation lands on the normal hammer's angle grid, so blueprints whose pieces use standard angles remain compatible with ordinary hammer replacements. Existing saved placements keep their exact angles until you explicitly rotate them. Imported blueprints can still contain nonstandard piece angles.
 
@@ -141,18 +143,18 @@ These paths are relative to your r2modman profile:
 
 | Path | Contents |
 | --- | --- |
-| `BepInEx/config/Buildheim/blueprints` | Imported and captured blueprints |
-| `BepInEx/config/Buildheim/placements` | Saved holograms and gathering notes |
-| `BepInEx/config/augusdogus.Buildheim.cfg` | Planner, autobuild, placement and HUD keys; HUD visibility; blueprint directory |
+| `BepInEx/config/Schemheim/blueprints` | Imported and captured blueprints |
+| `BepInEx/config/Schemheim/placements` | Saved holograms and gathering notes |
+| `BepInEx/config/fenari.Schemheim.cfg` | Planner, autobuild, placement and HUD keys; HUD visibility; blueprint directory |
 | `BepInEx/LogOutput.log` | Mod loading messages and errors |
 
 The configuration file is created on first launch. The positioning modifier combinations are currently fixed.
 
-Upgrading from our earlier PlanBuild builds preserves your setup: Buildheim copies `marcopogo.PlanBuild.cfg` into its new config file if one does not already exist, including custom keys and blueprint directories. If the profile already has `BepInEx/config/PlanBuild` and no Buildheim data folder, it continues using that existing folder for blueprints and saved placements. Fresh installs use the Buildheim paths above. Original files are preserved.
+Switching from Buildheim or PlanBuild preserves your setup: Schemheim copies `augusdogus.Buildheim.cfg` (or, failing that, `marcopogo.PlanBuild.cfg`) into its new config file if one does not already exist, including custom keys and blueprint directories. If the profile already has `BepInEx/config/Buildheim` or `BepInEx/config/PlanBuild` and no Schemheim data folder, it continues using that existing folder for blueprints and saved placements. Fresh installs use the Schemheim paths above. Original files are preserved.
 
 ## Blueprint support
 
-Buildheim reads `.blueprint` and `.vbuild` files, up to **10,000 pieces** and **8 MB** per file.
+Schemheim reads `.blueprint` and `.vbuild` files, up to **10,000 pieces** and **8 MB** per file.
 
 - Terrain edits and container contents are not applied. Custom snap markers are preserved and used by **Snap to target**.
 - Pieces with nonstandard scales can be displayed but cannot be placed by hammer assistance.
@@ -166,18 +168,18 @@ When switching from the original PlanBuild, finish or remove its shared plans wi
 Use a **.NET 8 SDK**, a local Valheim installation, and BepInEx from your mod profile. From the repository root:
 
 ```sh
-dotnet build src/Buildheim/Buildheim.csproj -c Release \
+dotnet build src/Schemheim/Schemheim.csproj -c Release \
   -p:GameDir="/path/to/Valheim" \
   -p:BepInExDir="/path/to/profile/BepInEx"
 
-dotnet test tests/Buildheim.Tests/Buildheim.Tests.csproj \
+dotnet test tests/Schemheim.Tests/Schemheim.Tests.csproj \
   -p:GameDir="/path/to/Valheim" \
   -p:BepInExDir="/path/to/profile/BepInEx"
 ```
 
-The mod DLL is `src/Buildheim/bin/Release/net48/Buildheim.dll`. Install only the mod DLL, not game assemblies or the entire build directory. Building does not install or publish anything and does not modify the installed game assemblies. `Environment.props` can supply local paths; `BepInExDir` defaults to the game's `BepInEx` directory.
+The mod DLL is `src/Schemheim/bin/Release/net48/Schemheim.dll`. Install only the mod DLL, not game assemblies or the entire build directory. Building does not install or publish anything and does not modify the installed game assemblies. `Environment.props` can supply local paths; `BepInExDir` defaults to the game's `BepInEx` directory.
 
-The client implementation lives in [`src/Buildheim/Client`](src/Buildheim/Client).
+The client implementation lives in [`src/Schemheim/Client`](src/Schemheim/Client).
 
 Tests cover blueprint parsing, material accounting, layer selection, autobuild scheduling, placement saves, and the game methods used by the hammer and input hooks. They do not run Unity. Runtime validation should include UI layout, modifier shortcuts, obstructed placement, inventory and chest transfers, reconnecting, and a vanilla server with an unmodded observer.
 
@@ -187,8 +189,15 @@ For bug reports, include the mod and Valheim versions, steps to reproduce, and r
 
 ## Acknowledgments and license
 
-This project builds on [the original PlanBuild](https://github.com/sirskunkalot/PlanBuild), created by MarcoPogo and developed with contributions from Jules, Algorithman, Dreous, and Jere. It uses [Jötunn](https://github.com/Valheim-Modding/Jotunn).
+Schemheim is a fork of [Buildheim](https://github.com/AugusDogus/Buildheim) by AugusDogus,
+forked at version 1.2.1. Buildheim builds on [the original PlanBuild](https://github.com/sirskunkalot/PlanBuild),
+created by MarcoPogo and developed with contributions from Jules, Algorithman, Dreous, and Jere.
+Both use [Jötunn](https://github.com/Valheim-Modding/Jotunn). The hologram-and-fill workflow is
+modelled on [Litematica](https://github.com/maruohon/litematica) for Minecraft.
 
-Original AugusDogus contributions are licensed under [MIT](LICENSE.md).
-Inherited PlanBuild code and artwork retain their WTFPL permissions; see the
+Original Schemheim contributions are licensed under [MIT](LICENSE.md). Buildheim's contributions
+retain their MIT license and PlanBuild code and artwork retain their WTFPL permissions; see the
 [third-party notices](package/THIRD-PARTY-NOTICES.md). Font notices are preserved separately.
+
+Like Buildheim, Schemheim is developed with AI coding assistance and is published on Thunderstore
+under the AI Generated category.

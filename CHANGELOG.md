@@ -1,6 +1,13 @@
-## Unreleased
+## 0.1.0
 
-- Preserve blueprint snap points and add a Build-tab action to align a blueprint with an aimed building snap point.
+- Fork [Buildheim](https://github.com/AugusDogus/Buildheim) 1.2.1 as Schemheim. New plugin GUID `fenari.Schemheim`, config file `fenari.Schemheim.cfg`, and data folder `BepInEx/config/Schemheim`.
+- Reuse existing Buildheim or PlanBuild data folders and copy `augusdogus.Buildheim.cfg` or `marcopogo.PlanBuild.cfg` settings on first launch, newest first.
+- Mark Buildheim and PlanBuild as incompatible so only one hammer-assist mod hooks placement.
+- Preserve blueprint snap points and add a Build-tab action to align a blueprint with an aimed building snap point. (Unreleased Buildheim change carried over.)
+
+## Buildheim history
+
+Versions below are Buildheim releases by AugusDogus that Schemheim inherits.
 
 ## 1.2.1
 

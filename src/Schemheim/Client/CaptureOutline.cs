@@ -23,7 +23,7 @@ namespace PlanBuild.Client
                 material.SetInt("_Cull", (int)CullMode.Off);
                 material.SetInt("_ZWrite", 0);
                 material.SetInt("_ZTest", (int)CompareFunction.Always);
-                mesh = new Mesh { name = "Buildheim capture box" };
+                mesh = new Mesh { name = "Schemheim capture box" };
                 var vertices = new Vector3[8];
                 for (int i = 0; i < vertices.Length; i++)
                     vertices[i] = new Vector3(i & 1, (i >> 1) & 1, (i >> 2) & 1);

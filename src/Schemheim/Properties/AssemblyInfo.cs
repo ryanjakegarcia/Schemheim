@@ -5,12 +5,12 @@ using PlanBuild;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Buildheim")]
+[assembly: AssemblyTitle("Schemheim")]
 [assembly: AssemblyDescription("Client-only blueprint planning and hammer building for Valheim")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Buildheim")]
-[assembly: AssemblyCopyright("Copyright (c) 2026 AugusDogus (original contributions)")]
+[assembly: AssemblyProduct("Schemheim")]
+[assembly: AssemblyCopyright("Copyright (c) 2026 Schemheim contributors (original contributions); Buildheim (c) 2026 AugusDogus; PlanBuild by MarcoPogo")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using PlanBuild;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e3243d22-4307-4008-ba36-9f326008cde5")]
+[assembly: Guid("7c2f5b1e-9a4d-4e6b-8f3a-2d1c0b9e8a7f")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -29,5 +29,5 @@ using PlanBuild;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.2.1.0")]
-[assembly: AssemblyFileVersion("1.2.1.0")]
+[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]

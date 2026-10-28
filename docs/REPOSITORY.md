@@ -47,7 +47,7 @@ The root README is the source for both GitHub and the package page. Keep artwork
 under `package/` and link developer details under `docs/`; packaging adjusts
 those links. Retain existing attribution and licenses when starting from a fork.
 
-Use MIT for original AugusDogus code with a dated copyright notice. Preserve
+Use MIT for original Schemheim code with a dated copyright notice. Preserve
 upstream authors, copyright years, license terms, and font notices. Adding
 MIT does not relicense inherited material. Put applicable third-party terms
 in `package/THIRD-PARTY-NOTICES.md` so they are included in release ZIPs.

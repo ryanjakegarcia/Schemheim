@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 AugusDogus
+Copyright (c) 2026 Schemheim contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,7 @@ SOFTWARE.
 
 ## Third-party material
 
-This MIT license covers original contributions by AugusDogus. Third-party
-material retains the separate terms identified in
+This MIT license covers original Schemheim contributions. Schemheim is a fork
+of Buildheim (MIT, Copyright (c) 2026 AugusDogus), which in turn derives from
+PlanBuild (WTFPL). Inherited material retains the separate terms identified in
 `THIRD-PARTY-NOTICES.md` (under `package/` in the source repository).

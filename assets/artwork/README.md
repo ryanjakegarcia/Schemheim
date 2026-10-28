@@ -12,3 +12,13 @@ Render the PNG assets from the repository root with librsvg:
 rsvg-convert assets/artwork/banner.svg -o package/banner.png
 rsvg-convert assets/artwork/icon.svg -o package/icon.png
 ```
+
+or with Inkscape:
+
+```sh
+inkscape assets/artwork/banner.svg --export-type=png --export-filename=package/banner.png -w 1200 -h 400
+inkscape assets/artwork/icon.svg --export-type=png --export-filename=package/icon.png -w 256 -h 256
+```
+
+To change the wordmark, edit the lettering as `<text>` elements and convert
+them back to paths with `inkscape --export-text-to-path --export-plain-svg`.

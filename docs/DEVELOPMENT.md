@@ -7,12 +7,12 @@ from the repository root to install the release tooling. Use your Valheim
 installation and BepInEx 5 profile:
 
 ```sh
-dotnet build src/Buildheim/Buildheim.csproj -c Release \
+dotnet build src/Schemheim/Schemheim.csproj -c Release \
   -p:GameDir="/path/to/Valheim" \
   -p:BepInExDir="/path/to/profile/BepInEx"
 ```
 
-Output: `src/Buildheim/bin/Release/net48/Buildheim.dll`.
+Output: `src/Schemheim/bin/Release/net48/Schemheim.dll`.
 
 `GameDir` defaults to a standard Steam installation on Linux or Windows.
 `BepInExDir` defaults to `GameDir/BepInEx`; set it explicitly for r2modman.
@@ -70,7 +70,7 @@ and manual runs without a release tag only build and check.
 
 Repository Actions settings:
 
-- Variable `THUNDERSTORE_NAMESPACE`: `AugusDogus`.
+- Variable `THUNDERSTORE_NAMESPACE`: your Thunderstore team name (letters, digits, underscores).
 - Secret `TCLI_AUTH_TOKEN`: a service-account access token for that Thunderstore team.
 
 ## Release

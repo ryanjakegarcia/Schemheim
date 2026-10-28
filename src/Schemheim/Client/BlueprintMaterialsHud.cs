@@ -27,7 +27,7 @@ namespace PlanBuild.Client
 
             // The nested call has a non-Repair piece, so the guard above prevents
             // recursion. Vanilla restores its own card when hovering ends, the
-            // planner opens or Buildheim's HUD is hidden.
+            // planner opens or Schemheim's HUD is hidden.
             __instance.SetupPieceInfo(hovered);
         }
 

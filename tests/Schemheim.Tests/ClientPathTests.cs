@@ -9,27 +9,38 @@ namespace PlanBuildTest
     public class ClientPathTests
     {
         private string root;
-        [TestInitialize] public void Setup() { root = Path.Combine(Path.GetTempPath(), "buildheim-path-test-" + Guid.NewGuid()); Directory.CreateDirectory(root); }
+        [TestInitialize] public void Setup() { root = Path.Combine(Path.GetTempPath(), "schemheim-path-test-" + Guid.NewGuid()); Directory.CreateDirectory(root); }
         [TestCleanup] public void Cleanup() => Directory.Delete(root, true);
 
         [TestMethod]
-        public void FreshInstallUsesBuildheimAndUpgradeKeepsExistingBlueprintsAndPlacements()
+        public void FreshInstallUsesSchemheimAndUpgradeKeepsExistingBlueprintsAndPlacements()
         {
-            Assert.AreEqual(Path.Combine(root, "Buildheim"), ClientPaths.DataDirectory(root));
+            Assert.AreEqual(Path.Combine(root, "Schemheim"), ClientPaths.DataDirectory(root));
             string legacy = Path.Combine(root, "PlanBuild");
             Directory.CreateDirectory(Path.Combine(legacy, "placements"));
             File.WriteAllText(Path.Combine(legacy, "placements", "world-player.json"), "saved plan");
             Assert.AreEqual(legacy, ClientPaths.DataDirectory(root));
             Assert.AreEqual("saved plan", File.ReadAllText(Path.Combine(ClientPaths.DataDirectory(root), "placements", "world-player.json")));
+            Directory.CreateDirectory(Path.Combine(root, "Schemheim"));
+            Assert.AreEqual(Path.Combine(root, "Schemheim"), ClientPaths.DataDirectory(root));
+        }
+
+        [TestMethod]
+        public void BuildheimDataIsPreferredOverOlderPlanBuildData()
+        {
+            Directory.CreateDirectory(Path.Combine(root, "PlanBuild"));
+            Assert.AreEqual(Path.Combine(root, "PlanBuild"), ClientPaths.DataDirectory(root));
             Directory.CreateDirectory(Path.Combine(root, "Buildheim"));
             Assert.AreEqual(Path.Combine(root, "Buildheim"), ClientPaths.DataDirectory(root));
+            Directory.CreateDirectory(Path.Combine(root, "Schemheim"));
+            Assert.AreEqual(Path.Combine(root, "Schemheim"), ClientPaths.DataDirectory(root));
         }
 
         [TestMethod]
         public void SettingsAreCopiedOnceIncludingCustomPathsAndKeys()
         {
             string legacy = Path.Combine(root, "marcopogo.PlanBuild.cfg");
-            string current = Path.Combine(root, "augusdogus.Buildheim.cfg");
+            string current = Path.Combine(root, "fenari.Schemheim.cfg");
             const string settings = "[Client]\nBlueprint directory = /my/custom/blueprints\nPlanner key = F9\nAutobuild key = F10\n";
             File.WriteAllText(legacy, settings);
             Assert.IsTrue(ClientPaths.TryMigrateConfig(root, current, out bool copied, out var error), error);
@@ -43,9 +54,20 @@ namespace PlanBuildTest
         }
 
         [TestMethod]
+        public void BuildheimSettingsArePreferredOverPlanBuildSettings()
+        {
+            File.WriteAllText(Path.Combine(root, "marcopogo.PlanBuild.cfg"), "planbuild");
+            File.WriteAllText(Path.Combine(root, "augusdogus.Buildheim.cfg"), "buildheim");
+            string current = Path.Combine(root, "fenari.Schemheim.cfg");
+            Assert.IsTrue(ClientPaths.TryMigrateConfig(root, current, out bool copied, out var error), error);
+            Assert.IsTrue(copied);
+            Assert.AreEqual("buildheim", File.ReadAllText(current));
+        }
+
+        [TestMethod]
         public void MissingLegacyConfigDoesNotCreateAnEmptyReplacement()
         {
-            string current = Path.Combine(root, "augusdogus.Buildheim.cfg");
+            string current = Path.Combine(root, "fenari.Schemheim.cfg");
             Assert.IsTrue(ClientPaths.TryMigrateConfig(root, current, out bool copied, out var error), error);
             Assert.IsFalse(copied);
             Assert.IsFalse(File.Exists(current));
