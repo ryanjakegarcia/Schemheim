@@ -6,7 +6,7 @@ namespace PlanBuild.Client
 {
     internal sealed class HammerTarget
     {
-        private enum Rejection { None, Completed, OtherLayer, NotAHammerPiece, Scaled, OutOfReach }
+        private enum Rejection { None, Completed, WrongPiece, WrongRotation, OtherLayer, NotAHammerPiece, Scaled, OutOfReach }
         public BlueprintProjection Projection { get; }
         public BlueprintProjection.ProjectedPiece Planned { get; }
         public Player Player { get; }
@@ -57,6 +57,9 @@ namespace PlanBuild.Client
         {
             rejection = Rejection.Completed;
             if (planned.Completed) return null;
+            // A conflicting real piece occupies the spot; vanilla would refuse the overlap anyway.
+            rejection = planned.State == PieceState.WrongRotation ? Rejection.WrongRotation : Rejection.WrongPiece;
+            if (planned.State != PieceState.Missing) return null;
             rejection = Rejection.OtherLayer;
             if (!projection.Layers.Contains(planned.Entry.posY)) return null;
             var piece = planned.Prefab.GetComponent<Piece>();
@@ -94,26 +97,16 @@ namespace PlanBuild.Client
             foreach (var planned in projection.Pieces)
             {
                 if (planned.Completed || !projection.Layers.Contains(planned.Entry.posY)) continue;
-                var pieceMatrix = projection.PieceMatrix(planned);
-                foreach (var part in planned.Parts)
+                if (!projection.Intersect(planned, ray, out float worldDistance, out var hit)) continue;
+                if (trace && worldDistance < nearestMiss)
                 {
-                    var matrix = pieceMatrix * part.LocalMatrix;
-                    var inverse = matrix.inverse;
-                    var localRay = new Ray(inverse.MultiplyPoint3x4(ray.origin), inverse.MultiplyVector(ray.direction));
-                    if (!part.Mesh.bounds.IntersectRay(localRay, out float distance)) continue;
-                    if (part.HitTest != null && !part.HitTest.Intersect(localRay, out distance)) continue;
-                    var hit = matrix.MultiplyPoint3x4(localRay.GetPoint(distance));
-                    float worldDistance = Vector3.Dot(hit - ray.origin, ray.direction);
-                    if (trace && worldDistance >= 0 && worldDistance < nearestMiss)
-                    {
-                        nearestMiss = worldDistance;
-                        missedPiece = $"{planned.Entry.name} at {worldDistance:0.00} m, behind the first real collider";
-                    }
-                    if (worldDistance < 0 || worldDistance >= closest) continue;
-                    closest = worldDistance;
-                    aimed = planned;
-                    aimedPoint = hit;
+                    nearestMiss = worldDistance;
+                    missedPiece = $"{planned.Entry.name} at {worldDistance:0.00} m, behind the first real collider";
                 }
+                if (worldDistance >= closest) continue;
+                closest = worldDistance;
+                aimed = planned;
+                aimedPoint = hit;
             }
             if (aimed == null)
             {
@@ -139,6 +132,8 @@ namespace PlanBuild.Client
                 Rejection.NotAHammerPiece => "this blueprint object has no hammer recipe.",
                 Rejection.Scaled => "custom-sized pieces can only be shown as a guide.",
                 Rejection.OutOfReach => "outside hammer reach. Move closer to build it.",
+                Rejection.WrongPiece => "a different piece is built here. Remove it first.",
+                Rejection.WrongRotation => "built with the wrong rotation. Remove it and rebuild.",
                 _ => "this piece is not available in the current layer."
             };
             return new BlueprintSelection.Guide(aimed, name + ": " + reason);

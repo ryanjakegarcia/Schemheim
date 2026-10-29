@@ -14,6 +14,8 @@ namespace PlanBuild.Client
         public ConfigEntry<KeyCode> PlacementKey { get; }
         public ConfigEntry<KeyCode> HudKey { get; }
         public ConfigEntry<bool> ShowHud { get; }
+        public ConfigEntry<bool> ShowVerification { get; }
+        public ConfigEntry<bool> RestrictPlacement { get; }
 
         public ClientConfig(ConfigFile config)
         {
@@ -26,6 +28,8 @@ namespace PlanBuild.Client
             PlacementKey = config.Bind("Client", "Placement key", KeyCode.F7, "Enable or disable the current placement without clearing it. Disabling hides the hologram and stops build assistance.");
             HudKey = config.Bind("Client", "HUD key", KeyCode.F8, "Show or hide Schemheim's HUD while the planner is closed. Does not change placement or build mode.");
             ShowHud = config.Bind("Client", "Show HUD", true, "Show Schemheim's build status and shortcut hints. Hiding the HUD does not stop autobuild or hide the hologram.");
+            ShowVerification = config.Bind("Client", "Verify overlay", true, "Tint hologram pieces that have the wrong piece (red) or rotation (orange) built at their spot, and show real pieces inside the blueprint that it does not contain (magenta).");
+            RestrictPlacement = config.Bind("Client", "Restrict placement", false, "Refuse ordinary hammer placements inside the loaded blueprint unless they match a missing blueprint piece. Pieces outside the blueprint are unaffected.");
         }
     }
 }

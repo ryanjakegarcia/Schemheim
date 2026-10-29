@@ -1,5 +1,9 @@
 ## 0.1.0
 
+- Verify the loaded world against the blueprint: tint wrong pieces red, wrong rotations orange, and player-built pieces inside the blueprint that it does not contain magenta. Pieces that share an origin by design are matched individually. Counts appear in the Build tab; the `Verify overlay` toggle hides the tints.
+- Name the hologram piece under the crosshair in the HUD, with its state and layer, whether or not a hammer is equipped.
+- Add `Restrict placement`, off by default: inside the blueprint the hammer only places a piece where the blueprint wants that piece, and says what it wants instead.
+- Hammer assistance skips spots occupied by a wrong piece or rotation and explains why.
 - Fork [Buildheim](https://github.com/AugusDogus/Buildheim) 1.2.1 as Schemheim. New plugin GUID `fenari.Schemheim`, config file `fenari.Schemheim.cfg`, and data folder `BepInEx/config/Schemheim`.
 - Reuse existing Buildheim or PlanBuild data folders and copy `augusdogus.Buildheim.cfg` or `marcopogo.PlanBuild.cfg` settings on first launch, newest first.
 - Mark Buildheim and PlanBuild as incompatible so only one hammer-assist mod hooks placement.

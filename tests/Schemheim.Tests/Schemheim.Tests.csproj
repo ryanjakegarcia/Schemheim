@@ -34,6 +34,9 @@
     <Compile Include="../../src/Schemheim/Client/BlueprintHitTest.cs" Link="BlueprintHitTest.cs" />
     <Compile Include="../../src/Schemheim/Client/AssistanceRange.cs" Link="AssistanceRange.cs" />
     <Compile Include="../../src/Schemheim/Client/AssistanceWork.cs" Link="AssistanceWork.cs" />
+    <Compile Include="../../src/Schemheim/Client/PieceState.cs" Link="PieceState.cs" />
+    <Compile Include="../../src/Schemheim/Client/PieceVerification.cs" Link="PieceVerification.cs" />
+    <Compile Include="../../src/Schemheim/Client/PlacementRestriction.cs" Link="PlacementRestriction.cs" />
     <None Update="resources/*.blueprint" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

@@ -10,6 +10,7 @@ namespace PlanBuild.Client
     internal sealed class ClientPlanner : IDisposable
     {
         private readonly HammerAssistance assistance = new HammerAssistance();
+        private readonly PlacementGuard guard;
         private readonly ProjectionControls controls;
         private readonly ChestObservation chests;
         private readonly PlannerWindow view;
@@ -28,8 +29,14 @@ namespace PlanBuild.Client
         public bool Visible { get; private set; }
         public string BuildStatus => controls.Held ? "Positioning hologram. Release modifiers to build." : assistance.Status;
         public string AssistancePauseReason => assistance.PauseReason(ActiveProjection, Player.m_localPlayer);
-        public bool HasHudActivity => Selection.Editing || controls.Held || assistance.AimedPiece != null;
-        public Piece HoveredPiece => assistance.AimedPiece?.Prefab.GetComponent<Piece>();
+        public bool HasHudActivity => Selection.Editing || controls.Held || assistance.AimedPiece != null || HoverDescription != null;
+        public Piece HoveredPiece => (assistance.AimedPiece ?? HoveredPlanned)?.Prefab.GetComponent<Piece>();
+        // Litematica-style info overlay: what the crosshair rests on, hammer or not.
+        public BlueprintProjection.ProjectedPiece HoveredPlanned { get; private set; }
+        public BlueprintProjection.ExtraPiece HoveredExtra { get; private set; }
+        public string HoverDescription { get; private set; }
+        public bool VerificationShown => Config.ShowVerification.Value;
+        public bool PlacementRestricted => Config.RestrictPlacement.Value;
 
         public ClientPlanner(ClientConfig config)
         {
@@ -40,6 +47,7 @@ namespace PlanBuild.Client
                 !Player.m_localPlayer.IsDead() && Player.m_localPlayer.TakeInput() && !Hud.IsPieceSelectionVisible()
                 ? ActiveProjection : null);
             chests = new ChestObservation(Materials);
+            guard = new PlacementGuard(() => Config.RestrictPlacement.Value ? ActiveProjection : null);
             view = new PlannerWindow(this);
         }
 
@@ -69,6 +77,7 @@ namespace PlanBuild.Client
             if (!session.Active && ZNet.instance && ZNet.instance.GetWorld() != null && Player.m_localPlayer.GetPlayerID() != 0) RestoreSession();
             if (Projection != null)
             {
+                Projection.ShowVerification = Config.ShowVerification.Value;
                 chests.Update();
                 if (Time.time >= nextProgressCheck)
                 {
@@ -98,7 +107,79 @@ namespace PlanBuild.Client
             controls.Update();
             Selection.Update();
             UpdateAssistance();
+            UpdateHover();
             view.Update();
+        }
+
+        private void UpdateHover()
+        {
+            HoveredPlanned = null;
+            HoveredExtra = null;
+            HoverDescription = null;
+            var projection = ActiveProjection;
+            var player = Player.m_localPlayer;
+            if (projection == null || Visible || controls.Held || !player.TakeInput() || Hud.IsPieceSelectionVisible() || !GameCamera.instance) return;
+            var camera = GameCamera.instance.transform;
+            var ray = new Ray(camera.position, camera.forward);
+            float closest = 50f;
+            if (Physics.Raycast(ray, out var obstacle, closest, player.m_placeRayMask)) closest = obstacle.distance + 0.15f;
+            foreach (var planned in projection.Pieces)
+            {
+                if (planned.Completed || !projection.Layers.Contains(planned.Entry.posY)) continue;
+                if (!projection.Intersect(planned, ray, out float distance, out _) || distance >= closest) continue;
+                closest = distance;
+                HoveredPlanned = planned;
+            }
+            if (HoveredPlanned != null)
+            {
+                HoverDescription = Describe(projection, HoveredPlanned);
+                return;
+            }
+            if (!projection.ShowVerification) return;
+            var hovered = player.GetHoverObject() ? player.GetHoverObject().GetComponentInParent<Piece>() : null;
+            if (!hovered) return;
+            foreach (var extra in projection.Extras)
+            {
+                if (extra.Piece != hovered) continue;
+                HoveredExtra = extra;
+                HoverDescription = Localization.instance.Localize(hovered.m_name) + ": not in the blueprint. Remove it or leave it.";
+                return;
+            }
+        }
+
+        private string Describe(BlueprintProjection projection, BlueprintProjection.ProjectedPiece planned)
+        {
+            var piece = planned.Prefab.GetComponent<Piece>();
+            string name = piece ? Localization.instance.Localize(piece.m_name) : planned.Entry.name;
+            string layer = projection.Layers.Selected.HasValue ? "" : $" | layer {projection.Layers.OrdinalOf(planned.Entry.posY)}";
+            switch (planned.State)
+            {
+                case PieceState.WrongPiece:
+                    var actual = planned.Actual ? Localization.instance.Localize(planned.Actual.m_name) : "another piece";
+                    return $"{name}: wrong piece built here ({actual}). Remove it to continue.{layer}";
+                case PieceState.WrongRotation:
+                    float off = planned.Actual ? Quaternion.Angle(projection.PieceRotation(planned), planned.Actual.transform.rotation) : 0;
+                    return $"{name}: built with the wrong rotation ({off:0}° off). Remove it and rebuild.{layer}";
+                default:
+                    // Assistance already names a buildable missing piece in its own status line.
+                    return assistance.AimedPiece == planned ? null : $"{name}: missing{layer}";
+            }
+        }
+
+        public void ToggleVerification()
+        {
+            Config.ShowVerification.Value = !Config.ShowVerification.Value;
+            Status = Config.ShowVerification.Value
+                ? "Verify overlay on: red = wrong piece, orange = wrong rotation, magenta = not in blueprint."
+                : "Verify overlay off: the hologram shows only pieces left to build.";
+        }
+
+        public void ToggleRestriction()
+        {
+            Config.RestrictPlacement.Value = !Config.RestrictPlacement.Value;
+            Status = Config.RestrictPlacement.Value
+                ? "Restrict placement on: inside the blueprint, the hammer only places matching blueprint pieces."
+                : "Restrict placement off: the hammer builds anything anywhere.";
         }
 
         public void SetVisible(bool value, bool playSound = true)
@@ -143,7 +224,7 @@ namespace PlanBuild.Client
         {
             if (Player.m_localPlayer && !Player.m_localPlayer.IsDead() && scene == ZNetScene.instance)
             {
-                ActiveProjection?.Draw(assistance.PreviewPiece, assistance.AimedPiece);
+                ActiveProjection?.Draw(assistance.PreviewPiece, assistance.AimedPiece ?? HoveredPlanned);
                 Selection.Draw(Visible && view.CaptureVisible);
             }
         }
@@ -321,6 +402,6 @@ namespace PlanBuild.Client
             Projection = null;
             Materials.ClearChecks();
         }
-        public void Dispose() { SaveSession(); ResetProjection(); SetVisible(false, false); chests.Dispose(); view.Dispose(); assistance.Dispose(); controls.Dispose(); Selection.Dispose(); }
+        public void Dispose() { SaveSession(); ResetProjection(); SetVisible(false, false); chests.Dispose(); view.Dispose(); guard.Dispose(); assistance.Dispose(); controls.Dispose(); Selection.Dispose(); }
     }
 }
