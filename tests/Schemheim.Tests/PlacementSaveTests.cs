@@ -15,9 +15,17 @@ namespace PlanBuildTest
 
         private static PlacementSave Sample() => new PlacementSave
         {
-            Version = 1, Name = "House", Blueprint = new[] { "#Name:House", "#Pieces", "wood_wall;Building;0;0;0;0;0;0;1;;1;1;1" },
-            X = 123.25f, Y = -4.5f, Z = 678, Yaw = 22.5f, LayerHeight = 2, Layer = 0,
-            PreviewOnly = true, CheckedMaterials = new[] { "$item_wood" }
+            Version = 1,
+            Name = "House",
+            Blueprint = new[] { "#Name:House", "#Pieces", "wood_wall;Building;0;0;0;0;0;0;1;;1;1;1" },
+            X = 123.25f,
+            Y = -4.5f,
+            Z = 678,
+            Yaw = 22.5f,
+            LayerHeight = 2,
+            Layer = 0,
+            PreviewOnly = true,
+            CheckedMaterials = new[] { "$item_wood" }
         };
 
         [TestMethod]

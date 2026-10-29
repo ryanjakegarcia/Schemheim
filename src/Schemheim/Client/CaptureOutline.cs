@@ -28,7 +28,7 @@ namespace PlanBuild.Client
                 for (int i = 0; i < vertices.Length; i++)
                     vertices[i] = new Vector3(i & 1, (i >> 1) & 1, (i >> 2) & 1);
                 mesh.vertices = vertices;
-                mesh.SetIndices(new[] { 0,1, 2,3, 4,5, 6,7, 0,2, 1,3, 4,6, 5,7, 0,4, 1,5, 2,6, 3,7 }, MeshTopology.Lines, 0);
+                mesh.SetIndices(new[] { 0, 1, 2, 3, 4, 5, 6, 7, 0, 2, 1, 3, 4, 6, 5, 7, 0, 4, 1, 5, 2, 6, 3, 7 }, MeshTopology.Lines, 0);
                 mesh.RecalculateBounds();
             }
             var camera = GameCamera.instance.GetComponent<Camera>();
