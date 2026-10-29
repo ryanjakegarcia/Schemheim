@@ -107,6 +107,25 @@ Only pieces in the selected layer are shown and eligible for assisted building. 
 
 **Layer height** ranges from **0.5 to 4 m**, with a **2 m** default. A piece belongs to the layer containing its origin, so a tall wall can extend beyond that layer. Changing the layer height returns a selected layer to the bottom.
 
+## Verify what you built
+
+The hologram doubles as a verifier, like Litematica's. Every half second Schemheim compares the loaded world with the blueprint and tints pieces that disagree:
+
+| Colour | Meaning |
+| --- | --- |
+| **Cyan** | Missing: nothing is built here yet |
+| **Red** | Wrong piece: a different piece is built at this spot |
+| **Orange** | Wrong rotation: the right piece, turned the wrong way |
+| **Magenta** | Not in the blueprint: a player-built piece inside the blueprint that it does not contain |
+
+Pieces that share an origin on purpose, such as a wall and a beam or two crossing beams, are matched individually and never flagged against each other. The Build tab shows the counts next to the built total.
+
+Aim at any hologram piece, with or without a hammer, and the HUD names it, its state and its layer. Aim at a magenta piece and the HUD says it is not in the blueprint. Hammer assistance will not try to build over a red or orange piece; remove it first, then build the missing piece as usual.
+
+**Verify overlay** in the Build tab, or the `Verify overlay` setting, turns the tints and magenta extras off so the hologram shows only what is left to build. Red and orange pieces still count as unbuilt for materials and assistance.
+
+**Restrict placement** in the Build tab, or the `Restrict placement` setting, makes the hammer refuse an ordinary placement inside the blueprint unless it matches a missing blueprint piece in position, piece and rotation. The message explains what the blueprint wants there. Placements outside the blueprint are never affected. Assisted and autobuilt pieces always pass. This is off by default.
+
 ## Materials and gathering
 
 The Materials tab lists costs for unfinished pieces. Switch between the whole blueprint and the selected layer.
@@ -145,7 +164,7 @@ These paths are relative to your r2modman profile:
 | --- | --- |
 | `BepInEx/config/Schemheim/blueprints` | Imported and captured blueprints |
 | `BepInEx/config/Schemheim/placements` | Saved holograms and gathering notes |
-| `BepInEx/config/fenari.Schemheim.cfg` | Planner, autobuild, placement and HUD keys; HUD visibility; blueprint directory |
+| `BepInEx/config/fenari.Schemheim.cfg` | Planner, autobuild, placement and HUD keys; HUD visibility; verify overlay; restrict placement; blueprint directory |
 | `BepInEx/LogOutput.log` | Mod loading messages and errors |
 
 The configuration file is created on first launch. The positioning modifier combinations are currently fixed.

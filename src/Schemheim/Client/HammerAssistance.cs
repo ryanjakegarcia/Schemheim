@@ -256,7 +256,7 @@ namespace PlanBuild.Client
         private static void Built(Player __instance, bool __result)
         {
             if (__result && instance != null && instance.Active(__instance) && instance.target != null)
-                instance.target.Planned.Completed = true;
+                instance.target.Planned.State = PieceState.Built;
         }
 
         [HarmonyPrefix, HarmonyPatch(typeof(Player), "UpdatePlacementGhost")]

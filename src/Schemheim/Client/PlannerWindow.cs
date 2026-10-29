@@ -22,7 +22,7 @@ namespace PlanBuild.Client
         private Button[] modes;
         private GameObject buildControls;
         private Text buildTitle, modeDescription, layerLabel, positionLabel, status;
-        private Text placementToggle, hudToggle;
+        private Text placementToggle, hudToggle, verifyToggle, restrictToggle;
         private Slider layerHeight;
         private ScrollRect library;
         private MaterialsPanel materials;
@@ -59,8 +59,9 @@ namespace PlanBuild.Client
                     string mode = ModeName(planner.Mode);
                     string layer = planner.Projection.Layers.Selected.HasValue
                         ? $"Layer {planner.Projection.Layers.Ordinal}/{planner.Projection.Layers.Count}" : "All layers";
-                    string detail = planner.Mode == BuildMode.Guide ? "Hologram only. Select and place pieces yourself." : planner.BuildStatus;
-                    hudText.text = $"{detail}\n{mode} | {layer} | {planner.Config.ToggleKey.Value}: planner";
+                    string detail = planner.HoverDescription ?? (planner.Mode == BuildMode.Guide ? "Hologram only. Select and place pieces yourself." : planner.BuildStatus);
+                    string restricted = planner.PlacementRestricted ? " | restricted" : "";
+                    hudText.text = $"{detail}\n{mode}{restricted} | {layer} | {planner.Config.ToggleKey.Value}: planner";
                     if (ProjectionControls.Adjusting) hudText.text += "\n" + ProjectionControls.Hints;
                 }
                 PositionHud();
@@ -199,13 +200,16 @@ namespace PlanBuild.Client
             layerHeight = PlannerWidgets.Slider(body, 140, 184, 350, 0.5f, 4, 2,
                 value => planner.Projection?.Layers.SetHeight(Mathf.Round(value * 2) / 2));
             positionLabel = PlannerWidgets.Label(body, "", 0, 224, 644, 30, 18, true);
-            PlannerWidgets.Label(body, ProjectionControls.Hints, 0, 257, 644, 58, 17);
-            placementToggle = PlannerWidgets.Button(body, "Disable placement", 0, 336, 210,
+            PlannerWidgets.Label(body, ProjectionControls.Hints, 0, 254, 644, 44, 16);
+            placementToggle = PlannerWidgets.Button(body, "Disable placement", 0, 300, 210,
                 () => planner.SetPlacementEnabled(!planner.PlacementEnabled)).GetComponentInChildren<Text>();
-            PlannerWidgets.Button(body, "Move to my feet", 218, 336, 210, planner.MoveToFeet);
-            PlannerWidgets.Button(body, "Clear hologram", 436, 336, 208, planner.Clear);
-            PlannerWidgets.Button(body, "Snap to target", 0, 380, 210, planner.SnapToTarget);
-            PlannerWidgets.Label(body, "Aim at a building before opening the planner.", 218, 380, 426, 36);
+            PlannerWidgets.Button(body, "Move to my feet", 218, 300, 210, planner.MoveToFeet);
+            PlannerWidgets.Button(body, "Clear hologram", 436, 300, 208, planner.Clear);
+            PlannerWidgets.Button(body, "Snap to target", 0, 342, 210, planner.SnapToTarget);
+            PlannerWidgets.Label(body, "Aim at a building before opening the planner.", 218, 342, 426, 36, 16);
+            verifyToggle = PlannerWidgets.Button(body, "Verify overlay: on", 0, 384, 210, planner.ToggleVerification).GetComponentInChildren<Text>();
+            restrictToggle = PlannerWidgets.Button(body, "Restrict placement: off", 218, 384, 210, planner.ToggleRestriction).GetComponentInChildren<Text>();
+            PlannerWidgets.Label(body, "Red: wrong piece · Orange: wrong rotation · Magenta: not in blueprint", 436, 384, 208, 40, 13);
         }
 
         private void RefreshBuild()
@@ -217,8 +221,13 @@ namespace PlanBuild.Client
                 buildTitle.text = "Choose a building from the Blueprints tab to start.";
                 return;
             }
-            buildTitle.text = $"{projection.Name}\n{projection.Pieces.Count(piece => piece.Completed)}/{projection.Pieces.Count} built | {projection.MissingPrefabs} unavailable";
+            int wrongPiece = projection.Count(PieceState.WrongPiece), wrongRotation = projection.Count(PieceState.WrongRotation);
+            string verification = projection.ShowVerification
+                ? $" | {wrongPiece} wrong piece | {wrongRotation} wrong rotation | {projection.Extras.Count} extra" : "";
+            buildTitle.text = $"{projection.Name}\n{projection.Count(PieceState.Built)}/{projection.Pieces.Count} built{verification} | {projection.MissingPrefabs} unavailable";
             placementToggle.text = planner.PlacementEnabled ? "Disable placement" : "Enable placement";
+            verifyToggle.text = planner.VerificationShown ? "Verify overlay: on" : "Verify overlay: off";
+            restrictToggle.text = planner.PlacementRestricted ? "Restrict placement: on" : "Restrict placement: off";
             for (int i = 0; i < modes.Length; i++) modes[i].interactable = planner.PlacementEnabled && i != (int)planner.Mode;
             modeDescription.text = !planner.PlacementEnabled
                 ? $"Placement disabled: hologram and assistance are off. Press {planner.Config.PlacementKey.Value} or Enable placement to resume."
