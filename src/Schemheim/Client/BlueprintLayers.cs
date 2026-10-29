@@ -12,6 +12,8 @@ namespace PlanBuild.Client
         public int? Selected { get; private set; }
         public int Count => available.Length;
         public int Ordinal => Selected.HasValue ? Array.IndexOf(available, Selected.Value) + 1 : 0;
+        // 1-based layer number a piece at this origin height belongs to.
+        public int OrdinalOf(float originHeight) => Array.IndexOf(available, Index(originHeight)) + 1;
 
         public BlueprintLayers(System.Collections.Generic.IEnumerable<float> origins)
         {
