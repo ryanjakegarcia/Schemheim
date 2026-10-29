@@ -37,10 +37,18 @@ namespace PlanBuild.Client
             if (signature == savedSignature) return true;
             var save = new PlacementSave
             {
-                Version = 1, Name = name, Blueprint = blueprint,
-                X = position.x, Y = position.y, Z = position.z, Yaw = projection.Yaw,
-                LayerHeight = projection.Layers.Height, Layer = projection.Layers.Selected,
-                PreviewOnly = mode == BuildMode.Guide, Disabled = !projection.Enabled, CheckedMaterials = checks
+                Version = 1,
+                Name = name,
+                Blueprint = blueprint,
+                X = position.x,
+                Y = position.y,
+                Z = position.z,
+                Yaw = projection.Yaw,
+                LayerHeight = projection.Layers.Height,
+                Layer = projection.Layers.Selected,
+                PreviewOnly = mode == BuildMode.Guide,
+                Disabled = !projection.Enabled,
+                CheckedMaterials = checks
             };
             if (!PlacementStore.TryWrite(path, save, out error)) return false;
             savedSignature = signature;

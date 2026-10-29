@@ -54,6 +54,28 @@ README image links use raw GitHub URLs pinned to the package version tag.
 The repository and that tag must be public for Thunderstore to display images;
 bundling images in the ZIP alone does not host them on the mod page.
 
+## Formatting
+
+CI runs `dotnet format --verify-no-changes` on both projects using the rules in
+`.editorconfig` (UTF-8 without BOM, LF, final newline, four-space indent). Fix
+a failure with:
+
+```sh
+dotnet format src/Schemheim/Schemheim.csproj
+dotnet format tests/Schemheim.Tests/Schemheim.Tests.csproj
+```
+
+Both commands need the game references, so pass `ManagedDir` and `BepInExDir`
+as environment variables if they are not at the default paths.
+
+## Branches
+
+`main` is protected: every change arrives through a pull request from a
+feature branch, and the **Build and publish** check must pass before merging.
+Direct pushes, force pushes and branch deletion are refused, including for
+administrators. Name branches by intent, for example `feature/verifier-overlay`
+or `ci/format-check`, and merge when the check is green.
+
 ## GitHub Actions
 
 The identical **Build and publish** workflow in each mod builds on pushes to
